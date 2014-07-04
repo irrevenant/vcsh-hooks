@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ "$(git config core.sparseCheckout)" != "true" ]; then
+    git config core.sparseCheckout true
+fi
+
+SPARSE_FILE=$GIT_DIR/info/sparse-checkout
+IGNORED="README README.md .gitignore Makefile .gitmodules"
+
+if [ -f "$SPARSE_FILE" ]; then
+    grep -q "^[*]$" $SPARSE_FILE || echo "*" >> $SPARSE_FILE
+else
+    echo "*" > $SPARSE_FILE
+fi
+
+for i in $IGNORED; do
+  grep -q "^[!]$i$" $SPARSE_FILE || echo "!$i" >> $SPARSE_FILE
+done
