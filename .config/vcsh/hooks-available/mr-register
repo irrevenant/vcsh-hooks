@@ -3,18 +3,21 @@
 # should be run post-clone and also post-run
 # This registers your new repos with mr.
 
-test -d $HOME/.config/mr/available.d || mkdir -p $HOME/.config/mr/available.d
+test -f $HOME.config/mr/base.d/$VCSH_DIRECTORY.vcsh || {
 
-CFG=$HOME/.config/mr/available.d/$VCSH_DIRECTORY.vcsh
-[ -e $CFG ] && exit
+    test -d $HOME/.config/mr/available.d || mkdir -p $HOME/.config/mr/available.d
 
-[ -n "$GIT_DIR" -a -n "$(git config remote.origin.url)" ] || exit
-cat > $CFG << EOF
+    CFG=$HOME/.config/mr/available.d/$VCSH_DIRECTORY.vcsh
+    [ -e $CFG ] && exit
+
+    [ -n "$GIT_DIR" -a -n "$(git config remote.origin.url)" ] || exit
+    cat > $CFG << EOF
 [.config/vcsh/repo.d/$VCSH_DIRECTORY.git]
 checkout = vcsh clone $(git config remote.origin.url) $VCSH_DIRECTORY
 EOF
 
-test -d $HOME/.config/mr/enabled.d || mkdir -p $HOME/.config/mr/enabled.d
-(cd $HOME/.config/mr/enabled.d && \
-  ln -s ../available.d/$VCSH_DIRECTORY.vcsh $VCSH_DIRECTORY.vcsh
-)
+    test -d $HOME/.config/mr/enabled.d || mkdir -p $HOME/.config/mr/enabled.d
+    (cd $HOME/.config/mr/enabled.d && \
+      ln -s ../available.d/$VCSH_DIRECTORY.vcsh $VCSH_DIRECTORY.vcsh
+    )
+}
